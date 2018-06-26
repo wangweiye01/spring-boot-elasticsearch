@@ -2,24 +2,29 @@ package cc.wangweiye.elasticsearch.controller;
 
 
 import cc.wangweiye.elasticsearch.model.Person;
+import cc.wangweiye.elasticsearch.repository.PersonRepository;
 import cc.wangweiye.elasticsearch.service.PersonService;
 import org.elasticsearch.common.unit.DistanceUnit;
 import org.elasticsearch.index.query.GeoDistanceQueryBuilder;
 import org.elasticsearch.index.query.QueryBuilders;
+import org.elasticsearch.index.query.QueryStringQueryBuilder;
 import org.elasticsearch.search.sort.GeoDistanceSortBuilder;
 import org.elasticsearch.search.sort.SortBuilders;
 import org.elasticsearch.search.sort.SortOrder;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.elasticsearch.core.ElasticsearchTemplate;
 import org.springframework.data.elasticsearch.core.query.NativeSearchQueryBuilder;
 import org.springframework.data.elasticsearch.core.query.SearchQuery;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.text.DecimalFormat;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Random;
 
@@ -59,7 +64,7 @@ public class PersonController {
         personService.bulkIndex(personList);
 
 //        SearchQuery searchQuery = new NativeSearchQueryBuilder().withQuery(QueryBuilders.queryStringQuery("spring boot OR 书籍")).build();
-//        List<Article> articles = elas、ticsearchTemplate.queryForList(se、archQuery, Article.class);
+//        List<Article> articles = elasticsearchTemplate.queryForList(searchQuery, Article.class);
 //        for (Article article : articles) {
 //            System.out.println(article.toString());
 //        }
@@ -99,5 +104,27 @@ public class PersonController {
 
         System.out.println("耗时：" + (System.currentTimeMillis() - nowTime));
         return personList;
+    }
+
+    @GetMapping("/queryByName")
+    public List<Person> queryStr() {
+        Pageable pageable = new PageRequest(0, 5);
+
+        String name = "名字594226";
+
+        Page<Person> searchResult = personService.queryByName(name, pageable);
+
+        return searchResult.getContent();
+    }
+
+    @GetMapping("/queryByPhone")
+    public List<Person> queryByPhone() {
+        Pageable pageable = new PageRequest(0, 5);
+
+        String phone = "26";
+
+        Page<Person> searchResult = personService.queryByPhoneLike(phone, pageable);
+
+        return searchResult.getContent();
     }
 }

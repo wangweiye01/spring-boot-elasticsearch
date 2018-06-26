@@ -3,11 +3,15 @@ package cc.wangweiye.elasticsearch.service;
 
 import cc.wangweiye.elasticsearch.model.Person;
 import cc.wangweiye.elasticsearch.repository.PersonRepository;
+import org.elasticsearch.index.query.QueryStringQueryBuilder;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.elasticsearch.core.ElasticsearchTemplate;
 import org.springframework.data.elasticsearch.core.query.IndexQuery;
 import org.springframework.stereotype.Service;
 
+import javax.xml.crypto.dsig.keyinfo.RetrievalMethod;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -59,5 +63,13 @@ public class PersonService {
             System.out.println("IndexerService.bulkIndex e;" + e.getMessage());
             throw e;
         }
+    }
+
+    public Page<Person> queryByName(String name, Pageable pageable) {
+        return personRepository.findByName(name, pageable);
+    }
+
+    public Page<Person> queryByPhoneLike(String phone, Pageable pageable) {
+        return personRepository.findByPhoneLike(phone, pageable);
     }
 }
