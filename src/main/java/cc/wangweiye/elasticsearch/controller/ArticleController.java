@@ -69,4 +69,17 @@ public class ArticleController {
 
         return list;
     }
+
+    @GetMapping("/matchPhraseQuery")
+    public List<Article> matchPhraseQuery(@RequestParam String content) {
+        QueryBuilder queryBuilder = QueryBuilders.matchPhraseQuery("content", content);
+
+        Iterable<Article> iterable = articleRepository.search(queryBuilder);
+
+        List<Article> list = Lists.newArrayList();
+
+        iterable.forEach(x -> list.add(x));
+
+        return list;
+    }
 }
